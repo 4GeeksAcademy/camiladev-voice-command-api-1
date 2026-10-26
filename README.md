@@ -137,7 +137,51 @@ npm run dev
 
 ---
 
-## 💻 What you need to do
+## � Connecting the frontend to the backend (troubleshooting)
+
+The frontend talks to the backend through a single base URL read from `frontend/.env`:
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+The `main.ts` code appends the endpoint path to that value (e.g. `POST /transcribe`), so **if the fetch fails, the first thing to check is this variable**.
+
+### In GitHub Codespaces (remote)
+
+When you open the app in a Codespace, the browser loads the frontend from a public URL such as:
+
+```text
+https://<codespace-name>-5173.app.github.dev
+```
+
+and the backend from:
+
+```text
+https://<codespace-name>-8000.app.github.dev
+```
+
+⚠️ **`127.0.0.1` inside the browser refers to your local machine, not the Codespace.** If `VITE_API_BASE_URL` points to `127.0.0.1:8000`, the fetch fails because the browser cannot reach the backend there.
+
+Follow these steps:
+
+1. Set the **backend port (8000) to Public** in the Codespaces "Ports" panel (not only the frontend port).
+2. Point `VITE_API_BASE_URL` to the public backend URL:
+
+   ```bash
+   VITE_API_BASE_URL=https://<codespace-name>-8000.app.github.dev
+   ```
+
+3. **Restart the Vite dev server** (stop `npm run dev` and run it again). Vite reads `.env` only at startup, so an existing server keeps the old URL.
+4. Reload the frontend page and try again. The chat panel should show the transcription and the final task response.
+
+### In local setup
+
+`http://127.0.0.1:8000` is correct when both frontend and backend run on the same machine. If you use a custom port, update the value accordingly.
+
+---
+
+## �💻 What you need to do
 
 - [ ] Create a module-level `tasks` list with `id`, `title`, and `done`, using unique incremental IDs.
 - [ ] Implement `GET /tasks`, `POST /tasks`, `PUT /tasks/{task_id}`, `PATCH /tasks/{task_id}`, and `DELETE /tasks/{task_id}` using in-memory state.

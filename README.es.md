@@ -137,7 +137,51 @@ npm run dev
 
 ---
 
-## 💻 Qué debes hacer
+## � Conectar el frontend con el backend (solucion de problemas)
+
+El frontend se comunica con el backend a traves de una unica URL base que se lee desde `frontend/.env`:
+
+```bash
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+El codigo de `main.ts` agrega la ruta del endpoint a ese valor (p. ej. `POST /transcribe`), asi que **si falla el fetch, lo primero que debes revisar es esta variable**.
+
+### En GitHub Codespaces (remoto)
+
+Cuando abres la app en un Codespace, el navegador carga el frontend desde una URL publica como:
+
+```text
+https://<nombre-codespace>-5173.app.github.dev
+```
+
+y el backend desde:
+
+```text
+https://<nombre-codespace>-8000.app.github.dev
+```
+
+⚠️ **`127.0.0.1` dentro del navegador apunta a tu maquina local, no al Codespace.** Si `VITE_API_BASE_URL` apunta a `127.0.0.1:8000`, el fetch falla porque el navegador no puede alcanzar el backend ahi.
+
+Sigue estos pasos:
+
+1. Pon el **puerto del backend (8000) en Public** en el panel "Ports" de Codespaces (no solo el del frontend).
+2. Apunta `VITE_API_BASE_URL` a la URL publica del backend:
+
+   ```bash
+   VITE_API_BASE_URL=https://<nombre-codespace>-8000.app.github.dev
+   ```
+
+3. **Reinicia el servidor de Vite** (deten `npm run dev` y vuelve a ejecutarlo). Vite lee `.env` solo al arrancar, asi que un servidor ya activo conserva la URL anterior.
+4. Recarga la pagina del frontend e intentalo de nuevo. El panel de chat deberia mostrar la transcripcion y la respuesta final de la tarea.
+
+### En configuracion local
+
+`http://127.0.0.1:8000` es correcto cuando el frontend y el backend corren en la misma maquina. Si usas un puerto distinto, actualiza el valor en consecuencia.
+
+---
+
+## �💻 Qué debes hacer
 
 - [ ] Crea una lista `tasks` a nivel de modulo con `id`, `title` y `done`, usando IDs unicos e incrementales.
 - [ ] Implementa `GET /tasks`, `POST /tasks`, `PUT /tasks/{task_id}`, `PATCH /tasks/{task_id}` y `DELETE /tasks/{task_id}` con almacenamiento en memoria.
